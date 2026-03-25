@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Weekly Report Generator — デモ＆提案資料</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Noto Sans JP', sans-serif; background: #1a1a2e; min-height: 100vh; }
+  .landing { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 24px; text-align: center; color: #fff; }
+  .landing h1 { font-size: 28px; font-weight: 900; margin-bottom: 8px; }
+  .landing p { color: #94a3b8; font-size: 13px; margin-bottom: 36px; line-height: 1.6; }
+  .cards { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; }
+  .card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 32px 28px; width: 280px; cursor: pointer; transition: all 0.2s; text-align: left; text-decoration: none; color: #fff; }
+  .card:hover { background: rgba(255,255,255,0.1); border-color: rgba(100,181,246,0.4); transform: translateY(-2px); }
+  .card-icon { font-size: 32px; margin-bottom: 12px; }
+  .card-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+  .card-desc { font-size: 12px; color: #94a3b8; line-height: 1.6; }
+  .card-badge { display: inline-block; font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 4px; margin-top: 12px; }
+  .back-btn { position: fixed; top: 16px; left: 16px; padding: 8px 16px; background: rgba(26,26,46,0.9); color: #94a3b8; border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; z-index: 1000; font-family: 'Noto Sans JP', sans-serif; backdrop-filter: blur(8px); }
+  .back-btn:hover { color: #fff; border-color: rgba(255,255,255,0.3); }
+  .footer { margin-top: 48px; color: #475569; font-size: 10px; line-height: 1.6; }
+  #app-root, #deck-root { display: none; }
+  #app-root.active, #deck-root.active { display: block; }
+  .landing.hidden { display: none; }
+</style>
+</head>
+<body>
+
+<!-- Landing page -->
+<div class="landing" id="landing">
+  <div style="display:inline-flex;align-items:center;gap:10px;margin-bottom:20px;">
+    <div style="width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,#2563EB,#7C3AED);display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px;font-weight:900;">W</div>
+    <h1>Weekly Report Generator</h1>
+  </div>
+  <p>営業議事録の自動蓄積・AI活用による週報生成システム<br>SharePoint + Power Automate ｜ 特定AIベンダーに依存しない設計</p>
+  <div class="cards">
+    <a class="card" onclick="showApp()">
+      <div class="card-icon">⚡</div>
+      <div class="card-title">デモアプリを体験</div>
+      <div class="card-desc">議事録の投入 → 自動振り分け → 蓄積 → Markdown＋プロンプト出力 → AI週報サンプル。実際に操作できます。</div>
+      <div class="card-badge" style="background:rgba(37,99,235,0.15);color:#64B5F6;">インタラクティブデモ</div>
+    </a>
+    <a class="card" onclick="showDeck()">
+      <div class="card-icon">📊</div>
+      <div class="card-title">提案資料を見る</div>
+      <div class="card-desc">課題 → Before/After → システム構成 → 主要機能 → 導入効果 → コスト。9スライドの提案デッキ。</div>
+      <div class="card-badge" style="background:rgba(124,58,237,0.15);color:#B794F6;">プレゼンテーション</div>
+    </a>
+  </div>
+  <div class="footer">
+    © 2026 — お問い合わせはメール・SNS DMからお気軽にどうぞ
+  </div>
+</div>
+
+<!-- Back button (hidden initially) -->
+<button class="back-btn" id="back-btn" style="display:none;" onclick="showLanding()">← トップに戻る</button>
+
+<!-- React roots -->
+<div id="app-root"></div>
+<div id="deck-root"></div>
+
+<!-- React + Babel -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+
+<script>
+let appRendered = false, deckRendered = false;
+function showLanding() {
+  document.getElementById('landing').classList.remove('hidden');
+  document.getElementById('app-root').classList.remove('active');
+  document.getElementById('deck-root').classList.remove('active');
+  document.getElementById('back-btn').style.display = 'none';
+}
+function showApp() {
+  document.getElementById('landing').classList.add('hidden');
+  document.getElementById('app-root').classList.add('active');
+  document.getElementById('deck-root').classList.remove('active');
+  document.getElementById('back-btn').style.display = 'block';
+  if (!appRendered) {
+    loadScript('demo-app.jsx', 'app-root', 'DemoApp');
+    appRendered = true;
+  }
+}
+function showDeck() {
+  document.getElementById('landing').classList.add('hidden');
+  document.getElementById('deck-root').classList.add('active');
+  document.getElementById('app-root').classList.remove('active');
+  document.getElementById('back-btn').style.display = 'block';
+  if (!deckRendered) {
+    loadScript('proposal-deck.jsx', 'deck-root', 'ProposalDeck');
+    deckRendered = true;
+  }
+}
+function loadScript(src, rootId, componentName) {
+  fetch(src)
+    .then(r => r.text())
+    .then(code => {
+      // Replace "export default" with window assignment
+      const modified = code.replace(/export\s+default\s+function\s+App/, `window.${componentName} = function ${componentName}`);
+      const transformed = Babel.transform(modified, { presets: ['react'] }).code;
+      eval(transformed);
+      const root = ReactDOM.createRoot(document.getElementById(rootId));
+      root.render(React.createElement(window[componentName]));
+    });
+}
+</script>
+</body>
+</html>
