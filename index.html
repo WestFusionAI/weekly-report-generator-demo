@@ -98,12 +98,21 @@ function loadScript(src, rootId, componentName) {
   fetch(src)
     .then(r => r.text())
     .then(code => {
-      // Replace "export default" with window assignment
-      const modified = code.replace(/export\s+default\s+function\s+App/, `window.${componentName} = function ${componentName}`);
+      // Strip ESM "import { ... } from 'react';" line and replace with destructure from window.React
+      const noImport = code.replace(
+        /^\s*import\s+\{([^}]+)\}\s+from\s+['"]react['"];?\s*$/m,
+        (_, hooks) => `const {${hooks}} = React;`
+      );
+      // Replace "export default function App" with window assignment
+      const modified = noImport.replace(/export\s+default\s+function\s+App/, `window.${componentName} = function ${componentName}`);
       const transformed = Babel.transform(modified, { presets: ['react'] }).code;
       eval(transformed);
       const root = ReactDOM.createRoot(document.getElementById(rootId));
       root.render(React.createElement(window[componentName]));
+    })
+    .catch(err => {
+      console.error('loadScript error:', err);
+      document.getElementById(rootId).innerHTML = '<div style="color:#fff;padding:40px;text-align:center;">読み込みエラーが発生しました。コンソールログを確認してください。<br><br>' + err.message + '</div>';
     });
 }
 </script>
