@@ -337,8 +337,11 @@ const SLIDES = [
             </div>
           ))}
         </div>
-        <div style={{ fontSize:"10px", color:"#64748b", lineHeight:1.6 }}>
-          お問い合わせ：メール / SNS DM / 各プラットフォームからお気軽にどうぞ
+        <div style={{ marginTop:"12px", paddingTop:"16px", borderTop:"1px solid rgba(100,181,246,0.15)", display:"flex", flexDirection:"column", alignItems:"center", gap:"4px" }}>
+          <div style={{ fontSize:"13px", fontWeight:900, letterSpacing:"0.08em", color:"#fff" }}>WEST FUSION AI</div>
+          <div style={{ fontSize:"10px", color:"#94a3b8" }}>Hideki West / 製造業 計23年 × AI実装家</div>
+          <div style={{ fontSize:"10px", color:"#64B5F6", marginTop:"4px" }}>west.fusion.ai@gmail.com</div>
+          <div style={{ fontSize:"9px", color:"#64748b", marginTop:"2px" }}>動くデモ: westfusionai.github.io ｜ LinkedIn・Notion 各プラットフォームから DM 可</div>
         </div>
       </div>
     ),
